@@ -1,0 +1,8 @@
+
+version: '2.0'
+services:
+ mongos:
+  container_name: mongos
+  image: mongo
+  ports:
+   - 60000:27017
