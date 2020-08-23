@@ -1,5 +1,14 @@
 ## Set up Sharding using Docker Containers
 
+### Architecture
+This is the ideal initial architecture for a scalable cluster. It proves scalable because of the capacity to scale horizontally by adding shards very easily.
+In this tutorial we cover adding 7 containers. 3 as the config server replica set, 3 as the first shard replica set and one mongos router.
+#### Note 
+To see a more complete step by step look of the process open the step-by-step.txt and translate if you don't speak spanish :).
+
+![alt text](https://res.cloudinary.com/dj7niyti6/image/upload/v1598194926/Diametra/Data-Science-Masters/mongo-cluster-architecture_ldptcd.png)
+
+
 ### Config servers
 Start config servers (3 member replica set)
 ```
@@ -75,3 +84,7 @@ sh.addShard("shard1rs/shard_server_container1_ip:port,shard_server_container2_ip
 sh.status()
 ```
 
+### Picture final result of the 3 architecture's components running
+The top terminal is connected to the mongos router and there is a picture of the result of running the sh.status () command as the shard is done. The lower left terminal is the mongoShell of the primary member of the replica set of the shard named shard1rs and the lower right terminal is the mongoShell of a secondary member of the replicaset cfgrs1 with the config servers.
+
+![alt text](https://res.cloudinary.com/dj7niyti6/image/upload/v1598195543/Diametra/Data-Science-Masters/IMG-20200821-WA0022_uxcwrr.jpg)
