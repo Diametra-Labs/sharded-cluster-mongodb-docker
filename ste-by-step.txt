@@ -19,9 +19,9 @@ Con cualquiera de los 3 valores $Ipv4Address del paso anterior, regresar a la te
     _id: "cfgrs1",
     configsvr: true,
     members: [
-      { _id : 0, host : "$Ipv4AddressContainer1:40005" },
-      { _id : 1, host : "$Ipv4AddressContainer2:40006" },
-      { _id : 2, host : "$Ipv4AddressContainer3:40007" }
+      { _id : 0, host : "$Ipv4AddressContainer1:27017" },
+      { _id : 1, host : "$Ipv4AddressContainer2:27017" },
+      { _id : 2, host : "$Ipv4AddressContainer3:27017" }
     ]})
 . Posteriormente correr el comando rs.status() , y en el valor “members”, deben haber 3 miembros.
 6. Crear contenedores de shard1 como replica set:
@@ -29,15 +29,15 @@ Repetir los pasos 3, 4 y 5 con dos diferencias. En el paso 3, la carpeta ahora e
 rs.initiate(  {
     _id: "shard1rs,
     members: [
-      { _id : 0, host : "$Ipv4AddressContainer1:50001" },
-      { _id : 1, host : "$Ipv4AddressContainer2:50002" },
-      { _id : 2, host : "$Ipv4AddressContainer3:50003" }
+      { _id : 0, host : "$Ipv4AddressContainer1:27017" },
+      { _id : 1, host : "$Ipv4AddressContainer2:27017" },
+      { _id : 2, host : "$Ipv4AddressContainer3:27017" }
     ]})
 . Este paso puede repetirse para cuandos shards se deseen o requieran.
 7. Crear contenedor con mongos router:
-Repetir el paso 3 en la carpeta sharding/mongos, lo que inicializará un contenedor con mongodb instalado y el paso 4. Ahora para acceder al contenedor e inicializar el proceso de mongos router, correremos el comando docker exec -it mongos /bin/bash. Desde la terminal del contenedor corremos el comando: mongos --configdb cfgrs1/$Ipv4AddressConfigServer1:40005,$Ipv4AddressConfigServer2:40006,$Ipv4AddressConfigServer3:40007 --bind_ip 0.0.0.0 (por ahora) --port 27017 (si no funciona --27018), esto incializará el proceso del servidor de mongo router pero aun hay que configurar el shard.
+Repetir el paso 3 en la carpeta sharding/mongos, lo que inicializará un contenedor con mongodb instalado y el paso 4. Ahora para acceder al contenedor e inicializar el proceso de mongos router, correremos el comando docker exec -it mongos /bin/bash. Desde la terminal del contenedor corremos el comando: mongos --configdb cfgrs1/$Ipv4AddressConfigServer1:27017,$Ipv4AddressConfigServer2:27017,$Ipv4AddressConfigServer3:27017 --bind_ip 0.0.0.0 (por ahora) --port 27017 (si no funciona --27018), esto incializará el proceso del servidor de mongo router pero aun hay que configurar el shard.
 8. Configurar shard (o shards) desde el mongoShell del mongosRouter:
-Con el proceso anterior corriendo, abrir otra terminal y correr el comando docker exec -it mongos /bin/bash para acceder a la terminal del contenedor con el proceso de mongos router corriendo. Para conectarnos al mongoShell corremos el comando mongo --host 127.0.0.1 port --27017 (o puerto elegido) lo que debe llevarte a un mongoShell que dice mongos.Ahora si, a ageregar el shard. Desde ahí correr el comando sh.addShard(“shard1rs/$Ipv4AddressShardServer1:50001,$Ipv4AddressShardServer2:50002,$Ipv4AddressShardServer3:50003”)y checar que en el json de la respuesta, en el campo “status”, tenga de valor ok.Ahora para corroborar que el shard funcione correr sh.status(), y el shard ya debe tener miembros y estar activo.
+Con el proceso anterior corriendo, abrir otra terminal y correr el comando docker exec -it mongos /bin/bash para acceder a la terminal del contenedor con el proceso de mongos router corriendo. Para conectarnos al mongoShell corremos el comando mongo --host 127.0.0.1 port --27017 (o puerto elegido) lo que debe llevarte a un mongoShell que dice mongos.Ahora si, a ageregar el shard. Desde ahí correr el comando sh.addShard(“shard1rs/$Ipv4AddressShardServer1:27017,$Ipv4AddressShardServer2:27017,$Ipv4AddressShardServer3:27017”)y checar que en el json de la respuesta, en el campo “status”, tenga de valor ok.Ahora para corroborar que el shard funcione correr sh.status(), y el shard ya debe tener miembros y estar activo.
 Aquí una foto de 7 contenedores corriendo (3 de config servers, 3 del shard y un mongos router)
 
 
